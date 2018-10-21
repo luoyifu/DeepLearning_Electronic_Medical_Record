@@ -1,0 +1,98 @@
++#Auther HJ  
+  +#对入院记录进行自动分割：包括基本信息、主  诉、格检查、最后诊断、辅助检查等txt文档  
+  +import  re  
+  +import  os  
+  +#查找到文件夹最后一个文件名（一般是入院记录）  
+  +list1=os.listdir('E:/罗一夫课题/DeepLearning ER/00202736_2')  
+  +#把病人ID号、时间按list列出来  
+  +res = re.findall(r'\d+(?#\D)',list1[-1])  
+  +print("E:/罗一夫课题/DeepLearning ER/00202736_2/"+list1[-1])  
+  +#patient_id+住院次数  
+  +id=res[0]+'_'+res[-1]  
+  +name0='姓名'  
+  +name1='主  诉'  
+  +name2='体格检查'  
+  +name3='最后诊断'  
+  +name4= '辅助检查'  
+  +name5='基本信息'  
+  +filename0=id+name0  
+  +filename1=id+name1  
+  +filename2=id+name2  
+  +filename3=id+name3  
+  +filename4=id+name4  
+  +filename5=id+name5  
+  +f= open("E:/罗一夫课题/DeepLearning ER/00202736_2/"+list1[-1])  
+  +e= open(filename0+".txt",'w')  
+  +g= open(filename1+".txt",'w')  
+  +h= open(filename2+".txt",'w')  
+  +i= open(filename3+".txt",'w+')  
+  +j= open(filename4+".txt",'w+')  
+  +l= open(filename5+".txt",'w+')  
+  +lines = f.readlines()  
+  +for line in lines:  
+  +  
+  +    if name1 in line:  
+  +        str1 = str(line.split(','))  
+  +        str1 = str1.replace('\\n', '')  
+  +        g.write(str1)  
+  +    if name2 in line:  
+  +        str2 = str(line.split(','))  
+  +        h.write(str2)  
+  +    if name4 in line:  
+  +        str6 = str(line.split(','))  
+  +        j.write(str6)  
+  +    if '1、'  in line:  
+  +        str3 = str(line.split('、'))  
+  +        i.write(str3)  
+  +    if '2、'  in line:  
+  +        str4 = str(line.split('、'))  
+  +        i.write(str4)  
+  +    if '3、'  in line:  
+  +        str5 = str(line.split('、'))  
+  +        i.write(str5)  
+  +    if '4、' in line:  
+  +        str6 = str(line.split('、'))  
+  +        i.write(str6)  
+  +    if '5、' in line:  
+  +        str7 = str(line.split('、'))  
+  +        i.write(str7)  
+  +    else:  
+  +        print('')  
+  +f.close()  
+  +g.close()  
+  +i.close()  
+  +k= open(filename3+".txt",'r+')  
+  +txt = k.read()  
+  +#去除特殊符号  
+  +r='[’ ,!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+'  
+  +txt=re.sub(r,'',txt)  
+  +#去除\n  
+  +txt=txt.replace('\\n', ',')  
+  +print(txt)  
+  +#对诊断进行处理  
+  +b=open(filename3+".txt",'w+')  
+  +#各个诊断用逗号隔开  
+  +txt1=txt.split(',')  
+  +#txt1=re.split(',| |"',txt)  
+  +#对诊断按数字进行排序  
+  +txt1=list(set(txt1))  
+  +txt1.sort()  
+  +#去掉空字符串  
+  +txt1 = [x for x in txt1 if x != '']  
+  +b.write(str(txt1))  
+  +b.close()  
+  +  
+  +#k.write(txt)  
+  +k.close()  
+  +#  
+  +w1 = '姓名'  
+  +w2 = '病史陈述者'  
+  +t= open("E:/罗一夫课题/DeepLearning ER/00202736_2/"+list1[-1])  
+  +buff = t.read()  
+  +pat = re.compile(w1+'(.*?)'+w2,re.S)  
+  +result = pat.findall(buff)  
+  +result=str(result).replace('\\n', ' ')  
+  +print(result)  
+  +l.write(result)  
+  +t.close()  
+  +  #  print(line.split())  
