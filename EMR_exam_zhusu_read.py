@@ -108,7 +108,7 @@ name1='辅助检查'
 name2='主 诉'
 name3='最后诊断'
 file_path = (
-    u'C:/wokspace/科研&探索/EMR_Database/患者病历文本语料仓库_test_database')
+    u'C:/workspace/research/EMR_Database/患者病历文本语料仓库_full_database')
 
 filelist_exam = Text_Treatment.get_full_filename(file_path,name1)
 filelist_zhusu = Text_Treatment.get_full_filename(file_path,name2)
@@ -126,9 +126,16 @@ for x in filelist_zhusu:
     word_list_zhusu.append(read_exam_file_single(x))
 
 # 将2个词汇列表合并为1个
+filepath_after_treatment_text_database = (
+    u'C:/workspace/research/EMR_Database/temp/患者病历处理后的文本语料仓库_database/')
+
 word_list_patient = word_list_exam
 for i in range(len(filelist_exam)):
     word_list_patient[i][len(word_list_patient[i]):len(word_list_patient[i])] = word_list_zhusu[i]
+    # 将患者列表存储到文件中，一个患者一个文件
+    temp =  [filepath_after_treatment_text_database, 'treated_', str(i), '.txt']
+    filename_temp = ''.join(temp)
+    Text_Treatment.write_word_list_to_file(word_list_patient[i],filename_temp)
 
 exam_feature_list = []
 for x in word_list_patient:
