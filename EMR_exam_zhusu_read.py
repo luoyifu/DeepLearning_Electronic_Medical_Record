@@ -100,8 +100,6 @@ def feature_tfidf(wordlist, feature_idf_list):
         feature_tfidf[num] = wordlist_t[num]*feature_idf_list[num]
     return feature_tfidf
 
-
-
 # 测试部分
 
 name1='辅助检查'
