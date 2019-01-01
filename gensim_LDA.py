@@ -57,6 +57,7 @@ tfidf_model = models.TfidfModel(corpus)
 # 将语料库中所有文档的词转换成tfidf模式
 # 相比原本的corpus，tfidf模式的语料库对于词语的重要性有更多的强调。 
 corpus_tfidf = tfidf_model[corpus]
+
 '''
 lsi_model = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=50)
 corpus_lsi = lsi_model[corpus_tfidf]
