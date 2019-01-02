@@ -1,8 +1,19 @@
 # -*- coding: utf-8 -*-
 '''
 处理电子病历中“辅助检查&主诉”部分
+提取主诉和辅助检查的特征，将其向量化
+每个患者表述成一个numpy array的向量，以便下一步对患者病历进行进一步分析
 
-2018-10-8 Luo Yifu
+method:
+病历数据读取，保存为list
+对所有病例包含的特征短语进行非重复特征提取
+患者病历向量化——词袋法（比照非重复特征）
+
+however
+患者病历向量化后，向量太稀疏，特征之间是否有关联，什么样的关联？
+
+last edited at:
+2019-01-02 Luo Yifu
 '''
 
 # numpy包引入用来构建向量和向量计算
@@ -10,14 +21,14 @@ import numpy as np
 import Text_Treatment
 import Pre_Treatment
 import EMR_read_FeatureAbstract as erf
-# 测试部分
 
 name1='辅助检查'
 name2='主 诉'
 name3='最后诊断'
 file_path = (
-    u'C:/workspace/research/EMR_Database/患者病历文本语料仓库_full_database')
+    u'C:/workspace/research/EMR_Database/患者病历文本语料仓库_test_database')
 
+# 获取文件名称列表
 filelist_exam = Text_Treatment.get_full_filename(file_path,name1)
 filelist_zhusu = Text_Treatment.get_full_filename(file_path,name2)
 filelist_zhenduan = Text_Treatment.get_full_filename(file_path,name3)
@@ -34,6 +45,7 @@ for x in filelist_zhusu:
     word_list_zhusu.append(erf.read_exam_file_single(x))
 
 # 将2个词汇列表合并为1个
+# 每个病历的主诉和检验结果都存放在一个list中，即word_list_patient
 filepath_after_treatment_text_database = (
     u'C:/workspace/research/EMR_Database/temp/患者病历处理后的文本语料仓库_database/')
 
@@ -45,11 +57,13 @@ for i in range(len(filelist_exam)):
     filename_temp = ''.join(temp)
     Text_Treatment.write_word_list_to_file(word_list_patient[i],filename_temp)
 
+# 提取患者病历中所有非重复特征
+# 对word_list_patient进行非重复特征提取，提取特征存入exam_feature_list
 exam_feature_list = []
 for x in word_list_patient:
     exam_feature_list = erf.find_unique_feature(exam_feature_list, x)
 
-# 计算physical_exam_feature_list中每个特征的idf值
+# 计算exam_feature_list中每个特征的idf值
 feature_idf_list = erf.feature_idf(exam_feature_list, word_list_patient) 
 
 feature_EMR = []
@@ -67,11 +81,11 @@ np.save('feature_EMR_tfidf_np_array.npy',feature_EMR_tfidf_np_array)
 # 读取最后诊断信息
 word_list_zhenduan = []
 for x in filelist_zhenduan:
-    word_list_zhenduan.append(read_zhenduan_file(x))
+    word_list_zhenduan.append(erf.read_zhenduan_file(x))
 
 zhenduan_feature_list = []
 for x in word_list_zhenduan:
-    zhenduan_feature_list = find_unique_feature(zhenduan_feature_list, x)
+    zhenduan_feature_list = erf.find_unique_feature(zhenduan_feature_list, x)
 
 zhenduan_idf_list = erf.feature_idf(zhenduan_feature_list, word_list_zhenduan) 
 
@@ -88,3 +102,28 @@ np.save('zhenduan_EMR_np_array.npy',zhenduan_EMR_np_array)
 np.save('zhenduan_EMR_tfidf_np_array.npy',zhenduan_EMR_tfidf_np_array)
 
 print(physical_exam_feature_list)
+
+'''
+提取主诉和检验数据
+病历总数 N
+得到exam_feature_list是8922行，即共有8922个特征。计为 M
+做法是：将所有病历中非重复的短语表述提取出来，成为一个特征列表（exam_feature_list）。
+
+每一个病历数据，对照这个特征列表，用词袋法标注出病历特征向量，存储在feature_EMR中，feature_EMR是一个 N*M的list的list
+将feature_EMR转换成numpy array的格式，即为feature_EMR_np_array
+计算tf-idf值，得到feature_EMR_tfidf和同样方法numpy array化得到feature_tfidf_np_array
+
+
+提取诊断数据特征
+zhenduan_feature_list共6780行，即6780个诊断短语。但是，这些诊断结果有很多是相似的，只是表述方式不同。
+
+与提取主诉和检验数据特征类似的，提取诊断特征。zhenduan_EMR
+
+因此，一个问题是如何度量诊断结果的相似性，或者用什么方式将不同的表述归化为统一表述。
+
+
+我们面临的一个主要问题是，特征向量，或者所有病例特征所形成的特征矩阵太稀疏。如何去稀疏化？
+
+诊断向量
+
+'''

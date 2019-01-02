@@ -24,6 +24,7 @@ def read_exam_file_single(filename):
     for x in re.split(r'[、，。,]', t):  # 按照“。，”对字符串进行切割
         x = Pre_Treatment.wash_data_info(x)
         x = Pre_Treatment.wash_exam_data(x)
+        x = Pre_Treatment.Special_Pattern_info(x)
         word_list.append(x)
     return word_list
 
@@ -35,9 +36,10 @@ def read_zhenduan_file(filename):
     t = f.read()
     t = re.sub(r'\s+', '', t)  # 去除多空格 to空格
     t = re.sub(r'\n+', '', t)
-    for x in re.split(r'[、，。,]|[提示|示|]', t):  # 按照“。，”对字符串进行切割
+    for x in re.split(r'[、，。,；]', t):  # 按照“。，”对字符串进行切割
         x = Pre_Treatment.wash_data_info(x)
         x = Pre_Treatment.wash_exam_data(x)
+        x = Pre_Treatment.Special_Pattern_info(x)
         x = x.lstrip('1234567890')
         word_list.append(x)
     return word_list

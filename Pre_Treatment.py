@@ -39,11 +39,28 @@ def wash_exam_data(text_str):
 # 清洗掉日期信息
 def wash_data_info(text_str):
     import re
+    text_str = re.sub(r'(\d{8}|\d{7}|\d{6})','',text_str)
     text_str = re.sub(r'(\d{4}-\d{1,2}-\d{1,2})','', text_str) # 清洗如2018-09-01样的日期信息
     text_str = re.sub(r'(\d{4}年)','', text_str)
     text_str = re.sub(r'(\d{1,2}月)','', text_str)
     text_str = re.sub(r'(\d{1,2}日)','', text_str)
     text_str = re.sub(r'(\d{1,2}:\d{1,2})','', text_str) # 清洗如9:40样的时间信息 
+    return text_str
+
+# 对于类似“行螺旋检查提示双肺炎性病变”/“心电图检查提示房颤”类型表述的信息提取
+# 我们希望提取特征，即提取检查后的结果
+# 以“提示/示”为关键词，查找表述中是否有该关键词，如果有，提取结果信息
+def Special_Pattern_info(text_str):
+    import re
+    matchObj = re.search(r'(.*)[提示|示|](.*)',text_str)
+    if matchObj:
+        text_str = matchObj.group(2)
+    else:
+        text_str = text_str
+    # match2 匹配形如“血氧饱和度608升高”，替换为“血氧饱和度升高”
+    matchObj2 = re.search(r'(.*)[\d+][升高|降低|正常]',text_str)
+    if matchObj2:
+        text_str = re.sub(r'(\d+)','',text_str)
     return text_str
 
 
