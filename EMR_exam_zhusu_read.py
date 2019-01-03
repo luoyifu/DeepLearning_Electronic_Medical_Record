@@ -28,7 +28,7 @@ name2='主 诉'
 name3='最后诊断'
 # 病历数据库所在文件路径
 file_path = (
-    u'C:/workspace/research/EMR_Database/患者病历文本语料仓库_test_database')
+    u'C:/workspace/research/EMR_Database/患者病历文本语料仓库_full_database')
 # 处理后的数据存储文件路径
 filepath_after_treatment_text_database = (
     u'C:/workspace/research/EMR_Database/temp/患者病历处理后的文本语料仓库_database/')
@@ -118,6 +118,10 @@ print(physical_exam_feature_list)
 提取主诉和检验数据
 病历总数 N
 得到exam_feature_list是8922行，即共有8922个特征。计为 M
+
+ps:2019-01-03：在改进了特征提取后，特征总数降低至7417个
+增加了Pre_Treatment.Special_Pattern_info函数
+
 做法是：将所有病历中非重复的短语表述提取出来，成为一个特征列表（exam_feature_list）。
 
 每一个病历数据，对照这个特征列表，用词袋法标注出病历特征向量，存储在feature_EMR中，feature_EMR是一个 N*M的list的list
@@ -127,6 +131,10 @@ print(physical_exam_feature_list)
 
 提取诊断数据特征
 zhenduan_feature_list共6780行，即6780个诊断短语。但是，这些诊断结果有很多是相似的，只是表述方式不同。
+
+ps:2019-01-03：在改进了特征提取后，诊断特征总数降低至6419个
+增加了Pre_Treatment.Special_Pattern_info函数
+
 与提取主诉和检验数据特征类似的，提取诊断特征。zhenduan_EMR
 
 因此，一个问题是如何度量诊断结果的相似性，或者用什么方式将不同的表述归化为统一表述。

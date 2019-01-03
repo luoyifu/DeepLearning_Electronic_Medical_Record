@@ -35,15 +35,30 @@ def cos_sim(array1,array2):
 # 绘制直方图函数。
 # 需要输入numpy array数据，绘制共20个区间的直方图
 def show_histogram(data):
-    n, bins, patches = plt.hist(data, 20,normed=0, edgecolor="black")
+    n, bins, patches = plt.hist(data, 30, normed=1, edgecolor="black")
     plt.xlabel("diff range")
     # 显示纵轴标签
     plt.ylabel("frequency")
     plt.title("diff between feature sim and zhenduan sim")
     plt.show()
 
-# -----------------------------分析-----------------------------------#
+def write_to_excel(data):
+    import pandas as pd
+    data_df = pd.DataFrame(data)
+    writer = pd.ExcelWriter('Save_Excel.xlsx')
+    data_df.to_excel(writer,'page_1') # float_format 控制精度
+    writer.save()
 
+''' 
+# change the index and column name
+data_df.columns = ['A','B','C','D','E','F','G','H','I','J']
+data_df.index = ['a','b','c','d','e','f','g','h','i','j']
+ '''
+
+
+
+# -----------------------------分析-----------------------------------#
+'''
 # method 1.实现
 diff = []
 for i in range(len(zhenduan_EMR_np_array)):
@@ -53,9 +68,21 @@ for i in range(len(zhenduan_EMR_np_array)):
             cos_zhenduan = cos_sim(zhenduan_EMR_np_array[i],zhenduan_EMR_np_array[j])
             diff.append(abs(cos_feature - cos_zhenduan))
             if abs(cos_feature - cos_zhenduan) == 0:
-                print(i,j)
+               print(i,j)
 
 # diff数据转换成numpy array
-diff_array = np.array(diff)
 
+
+diff_array = np.array(diff)
+np.save('diff_array',diff_array)
+
+'''
+
+diff_array = np.load('diff_array.npy')
+
+n, bins, patches = plt.hist(diff_array, 30,normed=0, edgecolor="black")
+data = np.vstack((bins[1:31],n))
+#data = np.append([n],[bins[1:31]])
+write_to_excel(data)
 show_histogram(diff_array)
+print("all done")
