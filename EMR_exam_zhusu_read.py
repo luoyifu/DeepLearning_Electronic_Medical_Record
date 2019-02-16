@@ -66,6 +66,12 @@ for i in range(len(filelist_exam)):
     filename_temp = ''.join(temp)
     Text_Treatment.write_word_list_to_file(word_list_patient[i],filename_temp)
 
+# 将array类型的word_list_patient_array存储到文件中，以便后续计算
+word_list_patient_array = np.array(word_list_patient)
+np.save('word_list_patient_array',word_list_patient_array)
+word_list_zhenduan_array = np.array(word_list_zhenduan)
+np.save('word_list_zhenduan_array',word_list_zhenduan_array)
+
 # -----------------------------非重复特征提取------------------------------#
 # 提取患者病历中所有非重复特征
 # 对word_list_patient进行非重复特征提取，提取特征存入exam_feature_list
@@ -97,6 +103,7 @@ zhenduan_EMR_tfidf = []
 for x in word_list_zhenduan:
     zhenduan_EMR.append(erf.feature_EMR_exam_zhusu(zhenduan_feature_list, x))
     zhenduan_EMR_tfidf.append(erf.feature_tfidf(erf.feature_EMR_exam_zhusu(zhenduan_feature_list, x), zhenduan_idf_list))
+
 
 # -------------------------------特征向量转换成numpy array型------------------------------#
 feature_EMR_np_array = np.array(feature_EMR)
